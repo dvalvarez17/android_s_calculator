@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Calculator</string>
+    <string name="txt_ac">AC</string>
+    <string name="txt_pos_neg">+/-</string>
+    <string name="txt_MOD_btn">%</string>
+    <string name="txt_symb_div">\u00F7</string>
+    <string name="txt_symb_mul">x</string>
+    <string name="txt_symb_substraction">-</string>
+    <string name="txt_symb_addition">+</string>
+    <string name="txt_symb_point">•</string>
+    <string name="txt_symb_clean">←</string>
+    <string name="txt_symb_equals">=</string>
+    <string name="num_0">0</string>
+    <string name="num_1">1</string>
+    <string name="num_2">2</string>
+    <string name="num_3">3</string>
+    <string name="num_4">4</string>
+    <string name="num_5">5</string>
+    <string name="num_6">6</string>
+    <string name="num_7">7</string>
+    <string name="num_8">8</string>
+    <string name="num_9">9</string>
+</resources>
