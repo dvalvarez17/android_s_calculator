@@ -8,14 +8,20 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    String operation;
-    float num1;
-    float num2;
+    final String ADDITION_SIGN = "+";
+    final String SUBSTRAC_SIGN = "-";
+    final String MULT_SIGN = "x";
+    final String DIV_SIGN = "\u00F7";
+    final String PERSEN_SIGN = "%";
+    boolean isANegNum;
+    List<String> operationsList = new ArrayList<>();
     Button ac;
     EditText inputOperations;
+    EditText strSentence;
     Button numEight;
     Button numFive;
     Button numFour;
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         signPersentage = findViewById(R.id.btn_percentage);
         signPlusMinus = findViewById(R.id.btn_plus_minus);
         signSubtraction = findViewById(R.id.btn_subs);
+        strSentence = findViewById(R.id.inputSentence);
 
         ac.setOnClickListener(this);
         inputOperations.setOnClickListener(this);
@@ -90,109 +97,125 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
+        String valInput;
         switch (view.getId()) {
             case R.id.btn_AC:
                 cleanAll();
                 break;
             case R.id.btn_delete:
-                inputOperations.setText(deleteLastCharacter());
+                strSentence.setText(deleteLastCharacter());
                 break;
             case R.id.btn_num_9:
-                assignToInputOperations("9");
+                assignToInputOperation("9");
                 break;
             case R.id.btn_num_8:
-                assignToInputOperations("8");
+                assignToInputOperation("8");
                 break;
             case R.id.btn_num_7:
-                assignToInputOperations("7");
+                assignToInputOperation("7");
                 break;
             case R.id.btn_num_6:
-                assignToInputOperations("6");
+                assignToInputOperation("6");
                 break;
             case R.id.btn_num_5:
-                assignToInputOperations("5");
+                assignToInputOperation("5");
                 break;
             case R.id.btn_num_4:
-                assignToInputOperations("4");
+                assignToInputOperation("4");
                 break;
             case R.id.btn_num_3:
-                assignToInputOperations("3");
+                assignToInputOperation("3");
                 break;
             case R.id.btn_num_2:
-                assignToInputOperations("2");
+                assignToInputOperation("2");
                 break;
             case R.id.btn_num_1:
-                assignToInputOperations("1");
+                assignToInputOperation("1");
                 break;
             case R.id.btn_num_0:
-                assignToInputOperations("0");
+                assignToInputOperation("0");
                 break;
             case R.id.btn_plus_minus:
 
                 break;
             case R.id.btn_addition:
-                num1 = Float.parseFloat(inputOperations.getText().toString());
-                // assignToInputOperations("+");
-                operation = "+";
-                cleanAll();
+                valInput = inputOperations.getText().toString();
+                if (isANegNum) {
+                    valInput = changeNumberSign(valInput);
+                    isANegNum = false;
+                }
+                assignToInputSentence(ADDITION_SIGN, valInput);
+                addNewValueIntoOperationList(valInput, "");
+                clean();
                 break;
             case R.id.btn_div:
-                num1 = Float.parseFloat(inputOperations.getText().toString());
-                // assignToInputOperations("/");
-                operation = "/";
-                cleanAll();
+                valInput = inputOperations.getText().toString();
+                if (isANegNum) {
+                    valInput = changeNumberSign(valInput);
+                    isANegNum = false;
+                }
+                assignToInputSentence(DIV_SIGN, valInput);
+                addNewValueIntoOperationList(valInput, DIV_SIGN);
+                clean();
                 break;
             case R.id.btn_multiply:
-                num1 = Float.parseFloat(inputOperations.getText().toString());
-                // assignToInputOperations("x");
-                operation = "*";
-                cleanAll();
+                valInput = inputOperations.getText().toString();
+                if (isANegNum) {
+                    valInput = changeNumberSign(valInput);
+                    isANegNum = false;
+                }
+                assignToInputSentence(MULT_SIGN, valInput);
+                addNewValueIntoOperationList(valInput, MULT_SIGN);
+                clean();
                 break;
-            case R.id.btn_percentage:
-                assignToInputOperations("%");
-                operation += "%";
-                break;
+            /*case R.id.btn_percentage:
+                assignToInputSentence(PERSEN_SIGN);
+                clean();
+                break;*/
             case R.id.btn_subs:
-                num1 = Float.parseFloat(inputOperations.getText().toString());
-                // assignToInputOperations("-");
-                operation = "-";
-                cleanAll();
+                valInput = inputOperations.getText().toString();
+                assignToInputSentence("", valInput);
+                addNewValueIntoOperationList(valInput, "");
+                isANegNum = true;
+                clean();
                 break;
             case R.id.btn_equals:
-                String txtVal = inputOperations.getText().toString();
-                if (operation.equals("*%")) {
-                    txtVal = deleteLastCharacter(txtVal);
+                valInput = inputOperations.getText().toString();
+                if (isANegNum) {
+                    valInput = changeNumberSign(valInput);
+                    isANegNum = false;
                 }
-                num2 = Float.parseFloat(txtVal);
-                getCalculation();
+                assignToInputSentence("", valInput);
+                addNewValueIntoOperationList(valInput, "");
+                operationsList.forEach(System.out::println);
                 break;
         }
     }
 
-    public void assignToInputOperations(String newText) {
+    public void assignToInputSentence(String operator, String value) {
+        String chainTxt = strSentence.getText().toString();
+        chainTxt += value;
+        if (operator != null) {
+            chainTxt += operator;
+        }
+        strSentence.setText(chainTxt);
+    }
+
+    public void assignToInputOperation(String newText) {
         String chainTxt = inputOperations.getText().toString();
         chainTxt += newText;
         inputOperations.setText(chainTxt);
     }
 
-    public void getCalculation() {
-        switch (operation) {
-            case "+":
-                inputOperations.setText(String.valueOf(getAddition(num1, num2)));
-                break;
-            case "-":
-                inputOperations.setText(String.valueOf(getSubtraction(num1, num2)));
-                break;
-            case "*":
-                inputOperations.setText(String.valueOf(getMultiplication(num1, num2)));
-                break;
-            case "/":
-                inputOperations.setText(String.valueOf(getDivision(num1, num2)));
-                break;
-            case "*%":
-                System.out.println("operation = " + operation);
-                inputOperations.setText(String.valueOf(getPercentage(num1, num2)));
-                break;
+    /**
+     * @param operator, always empty as long as the operator isn't multiplication or division.
+     */
+    public void addNewValueIntoOperationList(String newVal, String operator) {
+        if (!operator.isEmpty()) {
+            operationsList.add(operator);
+            operationsList.add(newVal);
+        } else {
+            operationsList.add(newVal);
         }
     }
 
@@ -229,8 +252,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }*/
 
+    public void clean(){
+        inputOperations.setText("");
+    }
+
     public void cleanAll() {
         inputOperations.setText("");
+        strSentence.setText("");
+        operationsList.clear();
     }
 
     public String deleteLastCharacter() {
@@ -242,5 +271,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public String deleteLastCharacter(String txt) {
         int length = txt.length();
         return txt.substring(0, length - 1);
+    }
+
+    public String changeNumberSign(String value) {
+        int num = Integer.parseInt(value);
+        num *= -1;
+        return String.valueOf(num);
     }
 }

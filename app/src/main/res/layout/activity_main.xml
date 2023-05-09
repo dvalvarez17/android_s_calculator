@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.31053352" />
+        app:layout_constraintGuide_percent="0.31" />
 
     <Button
         android:id="@+id/btn_AC"
@@ -54,8 +54,8 @@
         android:id="@+id/btn_div"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/style_operation_btns"
         android:text="@string/txt_symb_div"
         android:textSize="35sp"
@@ -102,7 +102,7 @@
         android:id="@+id/btn_multiply"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/style_operation_btns"
         android:text="@string/txt_symb_mul"
@@ -150,8 +150,8 @@
         android:id="@+id/btn_subs"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/style_operation_btns"
         android:text="@string/txt_symb_substraction"
         android:textSize="35sp"
@@ -264,16 +264,31 @@
 
     <EditText
         android:id="@+id/inputOperations"
-        android:layout_width="437dp"
-        android:layout_height="227dp"
+        android:layout_width="409dp"
+        android:layout_height="90dp"
         android:background="@drawable/style_input"
         android:ems="10"
         android:inputType="textPersonName"
-        android:textSize="100sp"
-        android:textAlignment="textEnd"
         android:paddingHorizontal="20dp"
+        android:textAlignment="textEnd"
+        android:textSize="80sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.551"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputSentence"
+        android:autofillHints="no" />
+
+    <EditText
+        android:id="@+id/inputSentence"
+        android:layout_width="407dp"
+        android:layout_height="125dp"
+        android:background="@color/background_input"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:paddingHorizontal="20dp"
+        android:textAlignment="textEnd"
+        android:textSize="100sp"
+        android:editable="false"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
