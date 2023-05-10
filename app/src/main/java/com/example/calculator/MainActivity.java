@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final String ADDITION_SIGN = "+";
     final String SUBSTRAC_SIGN = "-";
     final String MULT_SIGN = "x";
-    final String DIV_SIGN = "\u00F7";
+    final String DIV_SIGN = "/";
     final String PERSEN_SIGN = "%";
     boolean isANegNum;
     List<String> operationsList = new ArrayList<>();
@@ -136,7 +136,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 assignToInputOperation("0");
                 break;
             case R.id.btn_plus_minus:
-
+                String value = inputOperations.getText().toString();
+                value = changeNumberSign(value);
+                inputOperations.setText(value);
                 break;
             case R.id.btn_addition:
                 valInput = inputOperations.getText().toString();
@@ -144,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     valInput = changeNumberSign(valInput);
                     isANegNum = false;
                 }
-                assignToInputSentence(ADDITION_SIGN, valInput);
+                assignToInputSentence(this.ADDITION_SIGN, valInput);
                 addNewValueIntoOperationList(valInput, "");
                 clean();
                 break;
@@ -154,8 +156,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     valInput = changeNumberSign(valInput);
                     isANegNum = false;
                 }
-                assignToInputSentence(DIV_SIGN, valInput);
-                addNewValueIntoOperationList(valInput, DIV_SIGN);
+                assignToInputSentence(this.DIV_SIGN, valInput);
+                addNewValueIntoOperationList(valInput, this.DIV_SIGN);
                 clean();
                 break;
             case R.id.btn_multiply:
@@ -164,14 +166,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     valInput = changeNumberSign(valInput);
                     isANegNum = false;
                 }
-                assignToInputSentence(MULT_SIGN, valInput);
-                addNewValueIntoOperationList(valInput, MULT_SIGN);
+                assignToInputSentence(this.MULT_SIGN, valInput);
+                addNewValueIntoOperationList(valInput, this.MULT_SIGN);
                 clean();
                 break;
-            /*case R.id.btn_percentage:
-                assignToInputSentence(PERSEN_SIGN);
+            case R.id.btn_percentage:
+                valInput = inputOperations.getText().toString();
+                if (isANegNum) {
+                    valInput = changeNumberSign(valInput);
+                    isANegNum = false;
+                }
+                assignToInputSentence(this.PERSEN_SIGN, valInput);
+                addNewValueIntoOperationList(valInput, this.PERSEN_SIGN);
                 clean();
-                break;*/
+                break;
             case R.id.btn_subs:
                 valInput = inputOperations.getText().toString();
                 assignToInputSentence("", valInput);
@@ -180,14 +188,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 clean();
                 break;
             case R.id.btn_equals:
-                valInput = inputOperations.getText().toString();
-                if (isANegNum) {
+                List<String> result;
+                valInput = this.inputOperations.getText().toString();
+                if (this.isANegNum) {
                     valInput = changeNumberSign(valInput);
-                    isANegNum = false;
+                    this.isANegNum = false;
                 }
                 assignToInputSentence("", valInput);
                 addNewValueIntoOperationList(valInput, "");
-                operationsList.forEach(System.out::println);
+                result = solveSentence(this.operationsList);
+                inputOperations.setText(result.get(0));
                 break;
         }
     }
@@ -212,21 +222,87 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void addNewValueIntoOperationList(String newVal, String operator) {
         if (!operator.isEmpty()) {
-            operationsList.add(operator);
             operationsList.add(newVal);
-        } else {
+            operationsList.add(operator);
+        } else if (!newVal.isEmpty()) {
             operationsList.add(newVal);
         }
     }
 
-    public float getAddition(float num1, float num2) {
-        return num1 + num2;
+    public List<String> solveSentence(List<String> operationList) {
+        List<String> resultLst = new ArrayList<>();
+        int operatorIndex = 0,
+                indexNum1 = 0,
+                indexNum2 = 0;
+        float num1 = 0F,
+              num2 = 0F;
+        String result = "";
+        if (operationList.contains(this.MULT_SIGN)) {
+            if (operationList.contains(this.PERSEN_SIGN)) {
+                operatorIndex = operationList.indexOf(this.PERSEN_SIGN);
+                indexNum1 = operationList.indexOf(this.MULT_SIGN) - 1;
+                indexNum2 = operatorIndex - 1;
+                num1 = Float.parseFloat(operationList.get(indexNum1));
+                num2 = Float.parseFloat(operationList.get(indexNum2));
+                result = String.valueOf(getPercentage(num1, num2));
+            } else {
+                operatorIndex = operationList.indexOf(MULT_SIGN);
+                indexNum1 = operatorIndex - 1;
+                indexNum2 = operatorIndex + 1;
+                num1 = Float.parseFloat(operationList.get(indexNum1));
+                num2 = Float.parseFloat(operationList.get(indexNum2));
+                result = String.valueOf(getMultiplication(num1, num2));
+            }
+        } else if (operationList.contains(DIV_SIGN)) {
+            operatorIndex = operationList.indexOf(this.DIV_SIGN);
+            indexNum1 = operatorIndex - 1;
+            indexNum2 = operatorIndex + 1;
+            num1 = Float.parseFloat(operationList.get(indexNum1));
+            num2 = Float.parseFloat(operationList.get(indexNum2));
+            result = String.valueOf(getDivision(num1, num2));
+        }  else {
+            if (operationList.size() > 1) {
+                String restSum = String.valueOf(getAddition(operationList));
+                return getListWithNewResult(restSum);
+            }
+            return operationList;
+        }
+        resultLst = solveSentence(getListWithNewResult(operationList, indexNum1, indexNum2, result));
+        return resultLst;
     }
 
-    public float getSubtraction(float num1, float num2) {
 
+    public List<String> getListWithNewResult(List<String> list, int indexStart, int indexEnd, String result) {
+        List<String> resultList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (!list.get(i).equals(this.PERSEN_SIGN)) {
+                if (i < indexStart || i > indexEnd) {
+                    resultList.add(list.get(i));
+                } else if (i == indexStart) {
+                    resultList.add(result);
+                }
+            }
+        }
+        return resultList;
+    }
+
+    public List<String> getListWithNewResult(String result) {
+        List<String> newList = new ArrayList<>();
+        newList.add(result);
+        return newList;
+    }
+
+    public float getAddition(List<String> numbers) {
+        float total = 0F;
+        for(String num: numbers) {
+            total += Float.parseFloat(num);
+        }
+        return total;
+    }
+
+    /*public float getSubtraction(float num1, float num2) {
         return num1 - num2;
-    }
+    }*/
 
     public float getMultiplication(float num1, float num2) {
         return num1 * num2;
@@ -249,7 +325,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             txt = txt.
         }
-
     }*/
 
     public void clean(){
